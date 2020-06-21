@@ -1,0 +1,5 @@
+@import "~bootstrap/scss/functions"; //載入 bootstrap套用變數的function ， 有function 以下的變數才能正確地使用
+@import "./helpers/variables"; //載入事先儲存的變數(來自bootstrap)
+@import "~bootstrap/scss/bootstrap"; //載入 node_modules 裡的bootstrap 裡面的 scss  裡的 bootstrap.scss
+
+@import "./_dashboard";//載入首頁css    
