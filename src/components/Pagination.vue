@@ -20,6 +20,7 @@
 
 <script>
 export default {
+    name: 'pagination',
     props: ["pages"],
     methods: {
         gotoParent: function(page){

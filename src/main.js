@@ -11,12 +11,15 @@ import 'bootstrap'
 import App from './App'
 import router from './router'
 import './bus'
+import currencyFilter from './filters/currency'
 
-Vue.use(VueAxios, axios)
-Vue.config.productionTip = false
+Vue.use(VueAxios, axios);
+Vue.use(require('vue-moment'));
+Vue.config.productionTip = false;
 axios.defaults.withCredentials = true;
 
 Vue.component('Loading', Loading);
+Vue.filter('currency',currencyFilter);//透過 Vue.filter 做全域註冊，讓所有的 Vue 元件都可以使用 currency.js 的判斷來轉換格式
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
