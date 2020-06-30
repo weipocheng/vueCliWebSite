@@ -43,7 +43,7 @@
     </div>
 
     <hr />
-    <div class="container" v-if="carts.carts!==[]">
+    <div class="container">
       <table class="table mt-4 text-center" style="width: 50%;margin: 0 auto;">
         <thead>
           <tr>
@@ -87,17 +87,84 @@
           <button class="btn btn-outline-secondary" type="button" @click="addCouponCode">套用優惠碼</button>
         </div>
       </div>
-      <div class="input-group mb-3" style="width: 50%;margin: 0 auto;">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1">Email</span>
-        </div>
-        <input
-          type="email"
-          class="form-control"
-          placeholder="請輸入Email"
-          aria-label="Username"
-          aria-describedby="basic-addon1"
-        />
+
+      <div class="my-5 row justify-content-center">
+        <form class="col-md-6" @submit.prevent="createOrder">
+          <div class="form-group">
+            <label for="useremail">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              name="email"
+              id="useremail"
+              v-model="form.user.email"
+              placeholder="請輸入 Email"
+              v-validate="'required|email'"
+              :class="{'is-invalid': errors.has('email')===true}"
+            />
+            <span class="text-danger" v-if="errors.has('email')===true">{{errors.first('email')}}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="username">收件人姓名</label>
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              id="username"
+              v-model="form.user.name"
+              placeholder="輸入姓名"
+              v-validate="'required'"
+              :class="{'is-invalid': errors.has('name')===true}"
+            />
+            <span class="text-danger" v-if="errors.has('name')===true">請輸入姓名</span>
+          </div>
+
+          <div class="form-group">
+            <label for="usertel">收件人電話</label>
+            <input
+              type="tel"
+              class="form-control"
+              name="tel"
+              id="usertel"
+              v-model="form.user.tel"
+              placeholder="請輸入電話"
+              v-validate="'required'"
+              :class="{'is-invalid': errors.has('tel')===true}"
+            />
+            <span class="text-danger" v-if="errors.has('tel')===true">請輸入手機號碼</span>
+          </div>
+
+          <div class="form-group">
+            <label for="useraddress">收件人地址</label>
+            <input
+              type="text"
+              class="form-control"
+              name="address"
+              id="useraddress"
+              v-model="form.user.address"
+              placeholder="請輸入地址"
+              v-validate="'required'"
+              :class="{'is-invalid': errors.has('address')===true}"
+            />
+            <span class="text-danger" v-if="errors.has('address')===true">地址欄位不得留空</span>
+          </div>
+
+          <div class="form-group">
+            <label for="comment">留言</label>
+            <textarea
+              name
+              id="comment"
+              class="form-control"
+              cols="30"
+              rows="10"
+              v-model="form.message"
+            ></textarea>
+          </div>
+          <div class="text-right">
+            <button class="btn btn-danger">送出訂單</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -167,7 +234,16 @@ export default {
         loadingItem: "" //正在讀取的產品ID
       },
       isLoading: false,
-      coupon_code: '',
+      coupon_code: "",
+      form: {
+        user: {
+          name: "",
+          email: "",
+          tel: "",
+          address: ""
+        },
+        message: ""
+      } //要傳送的訂單資訊
     };
   },
   methods: {
@@ -216,7 +292,7 @@ export default {
         vm.isLoading = false;
       });
     },
-    delCartItem: function(id){
+    delCartItem: function(id) {
       const vm = this;
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
       vm.isLoading = true;
@@ -226,7 +302,7 @@ export default {
         vm.isLoading = false;
       });
     },
-    addCouponCode: function(){
+    addCouponCode: function() {
       const vm = this;
       const coupon = {
         data: {
@@ -235,10 +311,26 @@ export default {
       };
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
       vm.isLoading = true;
-      this.$http.post(url,coupon).then(response => {
+      this.$http.post(url, coupon).then(response => {
         console.log(response.data);
         vm.getCart();
         vm.isLoading = false;
+      });
+    },
+    createOrder: function() {
+      const vm = this;
+      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
+      vm.isLoading = true;
+      this.$validator.validate().then(valid => {
+        if (valid === true) {
+          this.$http.post(url, { data: vm.form }).then(response => {
+            console.log("訂單已建立", response);
+            vm.isLoading = false;
+          });
+        }else{
+          console.log(valid);
+          vm.isLoading = false;
+        }
       });
     }
   },
