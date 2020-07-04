@@ -43,7 +43,7 @@
     </div>
 
     <hr />
-    <div class="container">
+    <div class="container" v-if="carts.carts && carts.carts.length > 0">
       <table class="table mt-4 text-center" style="width: 50%;margin: 0 auto;">
         <thead>
           <tr>
@@ -196,7 +196,7 @@
               <del class="h6" v-if="product.price">原價 {{product.origin_price}}元</del>
               <div class="h4" v-if="product.price">現在只要 {{product.price}}元</div>
             </div>
-            <select name class="form-control mt-3" v-model="product.num">
+            <select name class="form-control mt-3" v-model="productNum">
               <option
                 :value="number"
                 v-for="number in 10"
@@ -207,12 +207,12 @@
           <div class="modal-footer">
             <div class="text-muted text-nowrap mr-3">
               小計
-              <strong>{{product.num * product.price}}</strong> 元
+              <strong>{{productNum * product.price}}</strong> 元
             </div>
             <button
               type="button"
               class="btn btn-primary"
-              @click.prevent="addtoCart(product.id,product.num)"
+              @click.prevent="addtoCart(product.id,productNum)"
             >加到購物車</button>
           </div>
         </div>
@@ -229,6 +229,7 @@ export default {
     return {
       products: [], //取得產品列表
       product: {}, //取得單一資料
+      productNum: 1,
       carts: {}, //取得購物車資料
       status: {
         loadingItem: "" //正在讀取的產品ID
@@ -259,12 +260,13 @@ export default {
     },
     getProduct: function(id) {
       const vm = this;
+      vm.productNum=1;
       const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/product/${id}`;
       vm.status.loadingItem = id;
       this.$http.get(url).then(response => {
         vm.product = response.data.product;
         $("#productModal").modal("show");
-        console.log(response);
+        console.log(response.data);
         vm.status.loadingItem = "";
       });
     },
@@ -325,6 +327,9 @@ export default {
         if (valid === true) {
           this.$http.post(url, { data: vm.form }).then(response => {
             console.log("訂單已建立", response);
+            if(response.data.success==true){
+              vm.$router.push(`/customer_Checkout/${response.data.orderId}`);
+            }
             vm.isLoading = false;
           });
         }else{

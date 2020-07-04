@@ -18,7 +18,7 @@
           <td>
             <ul class="list-group">
               <li v-for="(product,key) in item.products" :key="key" class="list-group-item">
-                {{product.product.title}} 數量 {{product.product.num}} {{product.product.unit}} 
+                {{product.product.title}} 數量 {{product.qty}} {{product.product.unit}} 
               </li>
             </ul>
           </td>

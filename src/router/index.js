@@ -6,6 +6,7 @@ import Dashboard from '@/components/Dashboard';
 import Products from '@/components/pages/Products';
 import Orders from '@/components/pages/Orders';
 import customerOrders from '@/components/pages/CustomerOrders';
+import customerCheckout from '@/components/pages/CustomerCheckout';
 import Coupons from '@/components/pages/Coupons'; 
 Vue.use(Router)
 
@@ -60,6 +61,11 @@ export default new Router({
           path: 'customer_order',
           name: 'CustomerOrder',
           component: customerOrders
+        },
+        {
+          path: 'customer_Checkout/:orderId',//orderId為自定義名稱  對應CutomerCheckout.vue的this.$route.params.orderId
+          name: 'customerCheckout',
+          component: customerCheckout
         },
       ]
     }
